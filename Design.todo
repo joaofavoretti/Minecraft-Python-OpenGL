@@ -1,0 +1,11 @@
+Design decisions will be used in here
+
+- Scene class: Will have everything and will be used to run
+
+- World class: class containing the blocks and terrain generation
+    Will be added to the scene class
+
+- Clouds
+    Will be added to the scene class
+
+- 
