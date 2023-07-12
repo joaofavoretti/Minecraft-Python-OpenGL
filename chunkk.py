@@ -13,15 +13,16 @@ class Chunk:
         
         self.blocks = {}
 
-        self.__add_blocks__()
+        self.__create_blocks__()
 
-    def __add_blocks__(self):
+    def __create_blocks__(self):
         for x in range(CHUNK_X_SIZE):
             for y in range(CHUNK_Y_SIZE):
                 for z in range(CHUNK_Z_SIZE):
                     block_x = self.coord[0] * CHUNK_X_SIZE + x
                     block_y = y
                     block_z = self.coord[1] * CHUNK_Z_SIZE + z
+        
                     self.blocks[(block_x, block_y, block_z)] = Block((block_x, block_y, block_z))
 
     def __stack_blocks_vertices__(self, blocks):

@@ -14,12 +14,12 @@ class Block:
 
         if not hasattr(self, 'texture_map'):
             self.texture_map = {
-                "top": (0, 0),
-                "bottom": (0, 0),
-                "front": (0, 0),
-                "back": (0, 0),
-                "left": (0, 0),
-                "right": (0, 0)
+                "top": (3, 0),
+                "bottom": (3, 0),
+                "front": (3, 0),
+                "back": (3, 0),
+                "left": (3, 0),
+                "right": (3, 0)
             }
 
         self.__define_vertices__(self.coord, self.texture_map)

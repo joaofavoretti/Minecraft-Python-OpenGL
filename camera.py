@@ -37,8 +37,6 @@ class Camera:
         elif key == glfw.KEY_ESCAPE and action != glfw.RELEASE:
             glfw.set_window_should_close(window, True)
         
-
-        
     def __handle_mouse_event__(self, window, xpos, ypos):
         if self.first_mouse:
             self.last_x = xpos
