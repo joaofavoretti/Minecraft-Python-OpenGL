@@ -1,20 +1,27 @@
 import glfw
 from OpenGL.GL import *
+import glm
+import numpy as np
+import ctypes
+from object import vertex_data_dtype
+from camera import Camera
+import time
 
 class Scene:
-    shaders = []
-
     def __init__ (self, width, height, window_title):
         self.width = width
         self.height = height
         self.window_title = window_title
+
+        self.__create_camera__()
+
+        self.shaders = []
+        self.objects = []
+        self.uniform_locations = {}
     
     def __init_window__(self):
-        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.RESIZABLE, glfw.FALSE)
-        glfw.window_hint(glfw.RESIZABLE, glfw.FALSE)
+        glfw.window_hint(glfw.VISIBLE, glfw.FALSE)
 
         window = glfw.create_window(self.width, self.height, self.window_title, None, None)
         if not window:
@@ -58,6 +65,18 @@ class Scene:
 
         glClearColor(r/255, g/255, b/255, a)
 
+    def __load_objects__(self, program):
+        for obj in self.objects:
+            obj.load(program)
+
+    def __create_camera__(self):
+        self.camera = Camera(self.width, self.height)
+
+    def __get_uniform_location__(self, uniform_name):
+        if uniform_name not in self.uniform_locations:
+            self.uniform_locations[uniform_name] = glGetUniformLocation(self.program, uniform_name)
+        
+        return self.uniform_locations[uniform_name]
 
     def add_shader(self, shader_code, shader_type):
         self.shaders.append(
@@ -67,6 +86,9 @@ class Scene:
                 "shader_type": shader_type
             }
         )
+
+    def add_object(self, object):
+        self.objects.append(object)
 
     def start(self):
         glfw.init()
@@ -82,18 +104,35 @@ class Scene:
 
         self.__start_program__(self.program)
 
-        color = (173, 216, 230)
-        self.__set_background_color__(self.window, color)
+        self.__load_objects__(self.program)
+
+        self.camera.start(self.window)
+
+        self.__set_background_color__(self.window, (173, 216, 230))
 
         glEnable(GL_DEPTH_TEST)
 
         glfw.show_window(self.window)
 
     def run(self):
+        
+        transform_array = np.array(glm.mat4(1.0))
+        glUniformMatrix4fv(self.__get_uniform_location__("uTransform"), 1, GL_TRUE, transform_array)
+
+
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+            view_array = np.array(self.camera.get_view_matrix())
+            glUniformMatrix4fv(self.__get_uniform_location__("uView"), 1, GL_TRUE, view_array)
+
+            projection_array = np.array(self.camera.get_projection_matrix())
+            glUniformMatrix4fv(self.__get_uniform_location__("uProjection"), 1, GL_TRUE, projection_array)
+
+            for obj in self.objects:
+                obj.draw()
 
             glfw.swap_buffers(self.window)
 

@@ -1,5 +1,6 @@
 from scene import Scene
 from OpenGL.GL import *
+from world import World
 
 VERTEX_SHADER_PATH = "shaders/vertex.glsl"
 FRAGMENT_SHADER_PATH = "shaders/fragment.glsl"
@@ -14,6 +15,8 @@ def main():
 
     fragment_code = open(FRAGMENT_SHADER_PATH, 'r').read()
     scene.add_shader(fragment_code, GL_FRAGMENT_SHADER)
+
+    scene.add_object(World())
 
     scene.start()
 
