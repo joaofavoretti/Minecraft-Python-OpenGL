@@ -78,6 +78,12 @@ class Scene:
         
         return self.uniform_locations[uniform_name]
 
+    def __start_camera__(self, window):
+        self.camera.start(self.window)
+
+        for object in self.objects:
+            self.camera.add_update_handler(object.camera_update_handler)
+
     def add_shader(self, shader_code, shader_type):
         self.shaders.append(
             {
@@ -106,9 +112,12 @@ class Scene:
 
         self.__load_objects__(self.program)
 
-        self.camera.start(self.window)
+        self.__start_camera__(self.window)
 
         self.__set_background_color__(self.window, (173, 216, 230))
+
+        glEnable(GL_CULL_FACE)
+        glCullFace(GL_BACK)
 
         glEnable(GL_DEPTH_TEST)
 

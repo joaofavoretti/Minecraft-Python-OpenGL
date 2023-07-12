@@ -21,6 +21,8 @@ class Camera:
         self.last_x = window_width / 2.0
         self.last_y = window_height / 2.0
 
+        self.update_handlers = []
+
     def __handle_key_event__(self, window, key, scancode, action, mods):
         if key == glfw.KEY_W and action != glfw.RELEASE:
             self.pos += self.speed * glm.normalize(glm.vec3(self.front.x, 0.0, self.front.z))
@@ -37,6 +39,8 @@ class Camera:
         elif key == glfw.KEY_ESCAPE and action != glfw.RELEASE:
             glfw.set_window_should_close(window, True)
         
+        self.__trigger_update_handlers__()
+
     def __handle_mouse_event__(self, window, xpos, ypos):
         if self.first_mouse:
             self.last_x = xpos
@@ -63,6 +67,10 @@ class Camera:
 
         self.front = glm.normalize(front)
 
+    def __trigger_update_handlers__(self):
+        for handler in self.update_handlers:
+            handler(self)
+
     def start(self, window):
         glfw.set_key_callback(window, self.__handle_key_event__)
         glfw.set_cursor_pos_callback(window, self.__handle_mouse_event__)
@@ -73,3 +81,9 @@ class Camera:
     
     def get_projection_matrix(self):
         return glm.perspective(glm.radians(self.projection_angle), self.aspect, 0.1, 1000.0)
+
+    def get_position(self):
+        return self.pos
+
+    def add_update_handler(self, handler):
+        self.update_handlers.append(handler)

@@ -35,3 +35,6 @@ class Object:
 
     def draw(self, camera):
         raise NotImplementedError("draw() not implemented")
+    
+    def camera_update_handler(self, camera):
+        raise NotImplementedError("camera_update_handler() not implemented")

@@ -15,10 +15,16 @@ class Chunk:
 
         self.__create_blocks__()
 
+        self.loaded = False
+
+    def __del__ (self):
+        glDeleteVertexArrays(1, [self.obj_vao])
+        glDeleteBuffers(1, [self.obj_vbo])
+
     def __create_blocks__(self):
         for x in range(CHUNK_X_SIZE):
-            for y in range(CHUNK_Y_SIZE):
-                for z in range(CHUNK_Z_SIZE):
+            for z in range(CHUNK_Z_SIZE):
+                for y in range(z // 3 + 1):
                     block_x = self.coord[0] * CHUNK_X_SIZE + x
                     block_y = y
                     block_z = self.coord[1] * CHUNK_Z_SIZE + z
@@ -39,6 +45,9 @@ class Chunk:
         return vertices
 
     def load(self, program):
+        if self.loaded:
+            return
+        
         self.obj_vao = glGenVertexArrays(1)
         glBindVertexArray(self.obj_vao)
 
@@ -57,6 +66,8 @@ class Chunk:
         glEnableVertexAttribArray(1)
 
         glBindVertexArray(0)
+
+        self.loaded = True
 
     def draw(self):
         glBindVertexArray(self.obj_vao)
