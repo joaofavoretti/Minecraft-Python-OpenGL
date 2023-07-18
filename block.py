@@ -74,3 +74,36 @@ class Block:
             (x * TEXTURE_ATLAS_RESOLUTION, (y + 1) * TEXTURE_ATLAS_RESOLUTION)
         ])
     
+    def getVertices(self, blocks):
+        """
+            Verify faces that are visible and create a copy from the vertices array but removing the indexes that are not visible
+        """
+        x, y, z = self.coord
+        faces = {
+            "top": (x, y + 1, z),
+            "bottom": (x, y - 1, z),
+            "front": (x, y, z + 1),
+            "back": (x, y, z - 1),
+            "left": (x - 1, y, z),
+            "right": (x + 1, y, z)
+        }
+        
+        face_indices = {
+            "front": [0, 1, 2, 3],
+            "back": [4, 5, 6, 7],
+            "top": [8, 9, 10, 11],
+            "bottom": [12, 13, 14, 15],
+            "right": [16, 17, 18, 19],
+            "left": [20, 21, 22, 23]
+        }
+        
+        # Create an empty list to store the visible vertices
+        visible_vertices = np.array([], dtype=vertex_data_dtype)
+
+        # Loop over each face and check if it is visible
+        for face, (fx, fy, fz) in faces.items():
+            if (fx, fy, fz) not in blocks:
+                # If the face is visible, add its vertices to the visible vertices list
+                visible_vertices = np.append(visible_vertices, self.vertices[face_indices[face]])
+
+        return visible_vertices

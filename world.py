@@ -2,7 +2,7 @@ import numpy as np
 from object import Object, vertex_data_dtype
 from OpenGL.GL import *
 from PIL import Image
-from chunkk import Chunk, CHUNK_X_SIZE, CHUNK_Z_SIZE
+from block_chunk import Chunk, CHUNK_X_SIZE, CHUNK_Z_SIZE
 
 TEXTURE_ATLAS_PATH = 'assets/texture_atlas.png'
 

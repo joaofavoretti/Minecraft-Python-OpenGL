@@ -128,6 +128,7 @@ class Scene:
         transform_array = np.array(glm.mat4(1.0))
         glUniformMatrix4fv(self.__get_uniform_location__("uTransform"), 1, GL_TRUE, transform_array)
 
+        # glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
         while not glfw.window_should_close(self.window):
             glfw.poll_events()

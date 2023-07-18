@@ -24,7 +24,7 @@ class Chunk:
     def __create_blocks__(self):
         for x in range(CHUNK_X_SIZE):
             for z in range(CHUNK_Z_SIZE):
-                for y in range(z // 3 + 1):
+                for y in range(z + 1):
                     block_x = self.coord[0] * CHUNK_X_SIZE + x
                     block_y = y
                     block_z = self.coord[1] * CHUNK_Z_SIZE + z
@@ -32,17 +32,16 @@ class Chunk:
                     self.blocks[(block_x, block_y, block_z)] = Block((block_x, block_y, block_z))
 
     def __stack_blocks_vertices__(self, blocks):
-        # Copy the first block vertices
         vertices = None
 
         for block in blocks.values():
             if vertices is None:
-                vertices = block.vertices.copy()
+                vertices = block.getVertices(blocks)
                 continue
             
-            vertices = np.vstack((vertices, block.vertices))
+            vertices = np.concatenate((vertices, block.getVertices(blocks)))
 
-        return vertices
+        return vertices, vertices.shape[0]
 
     def load(self, program):
         if self.loaded:
@@ -51,7 +50,7 @@ class Chunk:
         self.obj_vao = glGenVertexArrays(1)
         glBindVertexArray(self.obj_vao)
 
-        vertices = self.__stack_blocks_vertices__(self.blocks)
+        vertices, self.nvertices = self.__stack_blocks_vertices__(self.blocks)
 
         self.obj_vbo = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, self.obj_vbo)
@@ -70,6 +69,9 @@ class Chunk:
         self.loaded = True
 
     def draw(self):
+        if not self.loaded:
+            return
+
         glBindVertexArray(self.obj_vao)
-        glDrawArrays(GL_QUADS, 0, len(self.blocks) * 24)
+        glDrawArrays(GL_QUADS, 0, self.nvertices)
         glBindVertexArray(0)
