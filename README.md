@@ -16,7 +16,7 @@ $ ./run
 # Preview
 
 <div align="center">
-  <img src="./assets/preview.gif"/>
+  <img width="816" src="./assets/preview.gif"/>
 </div>
 
 # User input
